@@ -70,7 +70,7 @@ function ft_modify_category_query($query) {
 }
 
 add_action('template_redirect', 'ft_redirect_old_post_urls');
-function ft_redirect_old_post_urls() {
+function ft_redirect_old_post_urls($post_link, $post) {
     $options = get_option('propfirm_ftplugin_settings');
 
     // Jika opsi redirect tidak diaktifkan, keluar dari fungsi
