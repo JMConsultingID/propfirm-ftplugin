@@ -12,10 +12,15 @@ function propfirm_ftplugin_menu() {
 
 // Fungsi untuk menampilkan halaman settings
 function propfirm_ftplugin_settings_page() {
+    $settings_link = admin_url('admin.php?page=propfirm-ftplugin-permalink');
     ?>
     <div class="wrap">
         <h2>FT Plugin - Funded Trading</h2>
-        <p>This plugin is to support Funded Trading Website Technology, Enjoy Using this Plugin.</p> 
+        <p>This plugin is to support Funded Trading Website Technology, Enjoy Using this Plugin.</p>
+        <p>Setup Plugin :
+        <ol>
+            <li><a href="<?php echo esc_url($settings_link); ?>">Go to FT Plugin Permalink Settings</a></li>
+        </ol>
     </div>
     <?php
 }
