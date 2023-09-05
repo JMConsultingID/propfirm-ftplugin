@@ -69,6 +69,40 @@ function ft_modify_category_query($query) {
     }
 }
 
+add_action('template_redirect', 'ft_redirect_old_post_urls');
+function ft_redirect_old_post_urls() {
+    $options = get_option('propfirm_ftplugin_settings');
+
+    // Jika opsi redirect tidak diaktifkan, keluar dari fungsi
+    if (!isset($options['select_redirect']) || $options['select_redirect'] !== 'enable') {
+        return;
+    }
+
+    global $post;
+
+    // Pastikan kita berada di halaman single dari custom post type yang relevan dan 'select_cpt' telah diatur
+    if (is_singular($options['select_cpt']) && isset($options['select_cpt'])) {
+        // Dapatkan kategori dari postingan saat ini
+        $categories = get_the_category($post->ID);
+
+        // Jika postingan memiliki kategori
+        if ($categories) {
+            $category_slug = $categories[0]->slug; // Mengambil slug dari kategori pertama (Anda dapat memodifikasi ini jika diperlukan)
+
+            // Membuat URL baru
+            $new_url = home_url("/{$options['select_cpt']}/{$category_slug}/{$post->post_name}/");
+
+            // Jika URL saat ini tidak sama dengan URL baru, lakukan pengalihan
+            if ($_SERVER['REQUEST_URI'] !== parse_url($new_url, PHP_URL_PATH)) {
+                wp_redirect($new_url, 301); // 301 adalah kode status untuk pengalihan permanen
+                exit;
+            }
+        }
+    }
+}
+
+
+
 }
 // end enable plugin
 
