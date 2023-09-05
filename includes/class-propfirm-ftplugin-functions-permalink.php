@@ -44,7 +44,10 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_add_category_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/?$', 'index.php?category_name=$matches[1]', 'top');
+            $categories = get_categories(array('hide_empty' => 0));
+            foreach ($categories as $category) {
+                add_rewrite_rule('^' . $category->slug . '/?$', 'index.php?category_name=' . $category->slug, 'top');
+            }
         }
     }
 
