@@ -73,6 +73,12 @@ add_action('template_redirect', 'ft_redirect_old_post_urls');
 function ft_redirect_old_post_urls() {
     $options = get_option('propfirm_ftplugin_settings');
 
+    // Jika opsi redirect tidak diaktifkan, keluar dari fungsi
+    if (!isset($options['select_redirect']) || $options['select_redirect'] !== 'enable') {
+        error_log('Redirect not enabled'); // Ini akan mencatat jika opsi redirect tidak diaktifkan
+    	return;
+	}
+
     global $post;
 
     // Pastikan kita berada di halaman single dari custom post type yang relevan dan 'select_cpt' telah diatur
@@ -89,9 +95,10 @@ function ft_redirect_old_post_urls() {
 
             // Jika URL saat ini tidak sama dengan URL baru, lakukan pengalihan
             if ($_SERVER['REQUEST_URI'] !== parse_url($new_url, PHP_URL_PATH)) {
-                wp_redirect($new_url, 301); // 301 adalah kode status untuk pengalihan permanen
-                exit;
-            }
+			    error_log('Redirecting to: ' . $new_url); // Ini akan mencatat URL tujuan sebelum pengalihan
+			    wp_redirect($new_url, 301);
+			    exit;
+			}
         }
     }
 }
