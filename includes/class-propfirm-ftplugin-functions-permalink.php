@@ -25,7 +25,7 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_add_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'top');
+            add_rewrite_rule('([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'bottom');
         }
     }
 
@@ -44,7 +44,8 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_add_category_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/?$', 'index.php?category_name=$matches[1]', 'top');
+            add_rewrite_rule('([^/]+)/?$', 'index.php?category_name=$matches[1]', 'bottom');
+
         }
     }
 
