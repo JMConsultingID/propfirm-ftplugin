@@ -69,43 +69,31 @@ function ft_modify_category_query($query) {
     }
 }
 
-add_action('template_redirect', 'ft_redirect_old_post_urls',20);
-function ft_redirect_old_post_urls() {
-	global $post; // Pastikan Anda memiliki akses ke variabel global $post
+add_action('template_redirect', 'ft_redirect_old_cpt_urls');
+function ft_redirect_old_cpt_urls() {
+    global $post;
+
+    // Pastikan kita berada di single post dari custom post type yang diinginkan
     $options = get_option('propfirm_ftplugin_settings');
-
-    // Jika opsi redirect tidak diaktifkan, keluar dari fungsi
-    if (!isset($options['select_redirect']) || $options['select_redirect'] !== 'enable') {
-        error_log('Redirect not enabled'); // Ini akan mencatat jika opsi redirect tidak diaktifkan
-    	return;
-	}
-
-    // Pastikan kita berada di halaman single dari custom post type yang relevan dan 'select_cpt' telah diatur
-    if ($post && isset($options['select_cpt']) && $post->post_type == $options['select_cpt']) {
-        // Dapatkan kategori dari postingan saat ini
-        $categories = get_the_category($post->ID);
-
-        // Jika postingan memiliki kategori
-        if ($categories) {
-            $category_slug = $categories[0]->slug; // Mengambil slug dari kategori pertama (Anda dapat memodifikasi ini jika diperlukan)
+    if (is_singular($options['select_cpt'])) {
+        // Dapatkan kategori pertama dari post
+        $categories = get_the_terms($post->ID, 'category');
+        if ($categories && !is_wp_error($categories)) {
+            $category = array_shift($categories);
+            $category_slug = $category->slug;
 
             // Membuat URL baru
-            $new_url = home_url("/{$options['select_cpt']}/{$category_slug}/{$post->post_name}/");
-
-            // Jika URL saat ini tidak sama dengan URL baru, lakukan pengalihan
-            if ($_SERVER['REQUEST_URI'] !== parse_url($new_url, PHP_URL_PATH)) {
-			    error_log('Redirecting to: ' . $new_url); // Ini akan mencatat URL tujuan sebelum pengalihan
-			    wp_redirect($new_url, 301);
-			    exit;
-			}
-        } else{
-        	error_log('Redirect not enabled'.$categories);
+            $new_url = home_url($options['select_cpt'] . '/' . $category_slug . '/' . $post->post_name . '/');
+            
+            // Jika URL saat ini tidak sama dengan URL baru, arahkan ulang
+            if (get_permalink($post->ID) !== $new_url) {
+                wp_redirect($new_url, 301); // 301 adalah kode status untuk pengalihan permanen
+                exit;
+            }
         }
-
-    } else{
-        	error_log('Post type: ' . $post->post_type);
-        }
+    }
 }
+
 
 }
 // end enable plugin
