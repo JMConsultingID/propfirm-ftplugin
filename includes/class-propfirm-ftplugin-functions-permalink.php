@@ -92,6 +92,7 @@ if (is_propfirm_ftplugin_enabled()) {
             }
         }
     }
+
 }
 
 // Flush rewrite rules saat plugin diaktifkan
