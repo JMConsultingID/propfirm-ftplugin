@@ -20,12 +20,12 @@ if (is_propfirm_ftplugin_enabled()) {
         return $post_link;
     }
 
+    // Menambahkan rewrite rules
     add_action('init', 'ft_add_rewrite_rules');
     function ft_add_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt'])) {
-            // Hanya menambahkan rewrite rule untuk custom post type yang dipilih
-            add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'top');
+            add_rewrite_rule('([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'top');
         }
     }
 
@@ -44,8 +44,7 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_add_category_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt'])) {
-            // Hanya menambahkan rewrite rule untuk kategori yang terkait dengan custom post type yang dipilih
-            add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/?$', 'index.php?category_name=$matches[1]&post_type=' . $options['select_cpt'], 'top');
+            add_rewrite_rule('([^/]+)/?$', 'index.php?category_name=$matches[1]', 'top');
         }
     }
 
