@@ -73,11 +73,6 @@ add_action('template_redirect', 'ft_redirect_old_post_urls');
 function ft_redirect_old_post_urls() {
     $options = get_option('propfirm_ftplugin_settings');
 
-    // Jika opsi redirect tidak diaktifkan, keluar dari fungsi
-    if (!isset($options['select_redirect']) || $options['select_redirect'] !== 'enable') {
-        return;
-    }
-
     global $post;
 
     // Pastikan kita berada di halaman single dari custom post type yang relevan dan 'select_cpt' telah diatur
