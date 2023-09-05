@@ -6,6 +6,42 @@ function is_propfirm_ftplugin_enabled() {
 
 //enable plugin
 if (is_propfirm_ftplugin_enabled()) {
+	
+add_action('init', 'ft_add_old_cpt_rewrite_rule');
+function ft_add_old_cpt_rewrite_rule() {
+    $options = get_option('propfirm_ftplugin_settings');
+    if (isset($options['select_cpt'])) {
+        // Tambahkan rewrite rule untuk format URL lama
+        add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[1]', 'top');
+    }
+}
+
+add_action('template_redirect', 'ft_redirect_old_cpt_urls');
+function ft_redirect_old_cpt_urls() {
+    global $post;
+
+    // Pastikan kita berada di single post dari custom post type yang diinginkan
+    $options = get_option('propfirm_ftplugin_settings');
+    if (is_singular($options['select_cpt'])) {
+        // Dapatkan kategori pertama dari post
+        $categories = get_the_terms($post->ID, 'category');
+        if ($categories && !is_wp_error($categories)) {
+            $category = array_shift($categories);
+            $category_slug = $category->slug;
+
+            // Membuat URL baru
+            $new_url = home_url($options['select_cpt'] . '/' . $category_slug . '/' . $post->post_name . '/');
+            
+            // Jika URL saat ini tidak sama dengan URL baru, arahkan ulang
+            if (get_permalink($post->ID) !== $new_url) {
+                wp_redirect($new_url, 301); // 301 adalah kode status untuk pengalihan permanen
+                exit;
+            }
+        }
+    }
+}
+
+
 // Mengubah link post
 add_filter('post_type_link', 'ft_custom_permalink_structure', 10, 2);
 function ft_custom_permalink_structure($post_link, $post) {
@@ -69,30 +105,7 @@ function ft_modify_category_query($query) {
     }
 }
 
-add_action('template_redirect', 'ft_redirect_old_cpt_urls');
-function ft_redirect_old_cpt_urls() {
-    global $post;
 
-    // Pastikan kita berada di single post dari custom post type yang diinginkan
-    $options = get_option('propfirm_ftplugin_settings');
-    if (is_singular($options['select_cpt'])) {
-        // Dapatkan kategori pertama dari post
-        $categories = get_the_terms($post->ID, 'category');
-        if ($categories && !is_wp_error($categories)) {
-            $category = array_shift($categories);
-            $category_slug = $category->slug;
-
-            // Membuat URL baru
-            $new_url = home_url($options['select_cpt'] . '/' . $category_slug . '/' . $post->post_name . '/');
-            
-            // Jika URL saat ini tidak sama dengan URL baru, arahkan ulang
-            if (get_permalink($post->ID) !== $new_url) {
-                wp_redirect($new_url, 301); // 301 adalah kode status untuk pengalihan permanen
-                exit;
-            }
-        }
-    }
-}
 
 
 }
