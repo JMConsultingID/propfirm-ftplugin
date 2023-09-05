@@ -52,11 +52,10 @@ add_action('admin_init', 'propfirm_ftplugin_settings_init');
 
 function propfirm_ftplugin_settings_init() {
     register_setting('propfirm_ftplugin_settings_group', 'propfirm_ftplugin_settings');
-
     add_settings_section('propfirm_ftplugin_general_section', 'General Settings', null, 'propfirm-ftplugin');
-
     add_settings_field('ft_enable_plugin', 'Enable Plugin', 'ft_enable_plugin_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_cpt', 'Select Custom Post Type', 'ft_select_cpt_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_select_redirect_old_url', 'Redirect old URL', 'ft_select_redirect_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
 }
 
 function ft_enable_plugin_callback() {
@@ -78,3 +77,14 @@ function ft_select_cpt_callback() {
     }
     echo '</select>';
 }
+
+function ft_select_redirect_callback() {
+    $options = get_option('propfirm_ftplugin_settings');
+    $value = isset($options['select_redirect']) ? $options['select_redirect'] : 'disable';
+    echo '<select name="propfirm_ftplugin_settings[select_redirect]">
+            <option value="enable" '.selected($value, 'enable', false).'>Enable</option>
+            <option value="disable" '.selected($value, 'disable', false).'>Disable</option>
+          </select>';
+}
+
+
