@@ -30,6 +30,17 @@ if (is_propfirm_ftplugin_enabled()) {
         }
     }
 
+
+    // Mengubah link kategori
+    add_filter('term_link', 'ft_custom_category_permalink', 10, 3);
+    function ft_custom_category_permalink($url, $term, $taxonomy) {
+        $options = get_option('propfirm_ftplugin_settings');
+        if ($taxonomy == 'category' && isset($options['select_cpt'])) {
+            return home_url($term->slug . '/');
+        }
+        return $url;
+    }
+
     add_filter('query_vars', 'ft_add_query_vars');
     function ft_add_query_vars($vars) {
         $vars[] = 'ft_cpt';
@@ -50,26 +61,6 @@ if (is_propfirm_ftplugin_enabled()) {
         }
     }
 
-
-
-    // Mengubah link kategori
-    add_filter('term_link', 'ft_custom_category_permalink', 10, 3);
-    function ft_custom_category_permalink($url, $term, $taxonomy) {
-        $options = get_option('propfirm_ftplugin_settings');
-        if ($taxonomy == 'category' && isset($options['select_cpt'])) {
-            return home_url($term->slug . '/');
-        }
-        return $url;
-    }
-
-
-    add_action('pre_get_posts', 'ft_modify_category_query');
-    function ft_modify_category_query($query) {
-        $options = get_option('propfirm_ftplugin_settings');
-        if (!is_admin() && $query->is_category() && $query->is_main_query() && isset($options['select_cpt'])) {
-            $query->set('post_type', $options['select_cpt']);
-        }
-    }
 
     add_action('template_redirect', 'ft_redirect_old_cpt_urls_to_new');
     function ft_redirect_old_cpt_urls_to_new() {
