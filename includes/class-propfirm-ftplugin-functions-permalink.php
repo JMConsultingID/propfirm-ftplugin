@@ -21,9 +21,10 @@ add_action('init', 'ft_add_custom_rewrite_rule');
 function ft_add_custom_rewrite_rule() {
     $options = get_option('propfirm_ftplugin_settings');
     if (isset($options['select_cpt'])) {
-        add_rewrite_rule('([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'top');
+        add_rewrite_rule('^([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[1]', 'top');
     }
 }
+
 
 add_action('template_redirect', 'ft_redirect_to_new_url_structure');
 function ft_redirect_to_new_url_structure() {
