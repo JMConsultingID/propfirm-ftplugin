@@ -71,11 +71,21 @@ function ft_modify_category_query($query) {
 }
 
 
+add_action('init', 'ft_add_old_cpt_rewrite_rule');
+function ft_add_old_cpt_rewrite_rule() {
+    $options = get_option('propfirm_ftplugin_settings');
+    if (isset($options['select_cpt'])) {
+        // Tambahkan rewrite rule untuk format URL lama
+        add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[1]', 'top');
+    }
+}
+
+
 add_action('template_redirect', 'ft_redirect_old_cpt_urls');
 function ft_redirect_old_cpt_urls() {
     global $post;
 
-    $options = get_option('propfirm_ftplugin_settings');
+    $options = get_option('ft_permalink_settings');
     if (is_singular($options['select_cpt'])) {
         // Dapatkan kategori pertama dari post
         $categories = get_the_terms($post->ID, 'category');
@@ -88,9 +98,12 @@ function ft_redirect_old_cpt_urls() {
             
             // Jika URL saat ini tidak sama dengan URL baru, arahkan ulang
             if (get_permalink($post->ID) !== $new_url) {
+                error_log("Redirecting from " . get_permalink($post->ID) . " to " . $new_url); // Log untuk debugging
                 wp_redirect($new_url, 301); // 301 adalah kode status untuk pengalihan permanen
                 exit;
             }
+        } else {
+            error_log("No category found for post with ID " . $post->ID); // Log untuk debugging
         }
     }
 }
