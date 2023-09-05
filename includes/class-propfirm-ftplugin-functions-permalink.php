@@ -58,6 +58,11 @@ if (is_propfirm_ftplugin_enabled()) {
 
     add_action('template_redirect', 'ft_redirect_old_cpt_urls_to_new');
     function ft_redirect_old_cpt_urls_to_new() {
+        // Memeriksa apakah select_redirect diaktifkan
+        if (!isset($options['select_redirect']) || $options['select_redirect'] !== 'enable') {
+            return; // Jika tidak diaktifkan, keluar dari fungsi
+        }
+        
         global $post;
 
         $options = get_option('propfirm_ftplugin_settings');
