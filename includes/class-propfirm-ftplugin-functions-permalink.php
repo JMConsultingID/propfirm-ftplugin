@@ -71,22 +71,26 @@ function ft_modify_category_query($query) {
 }
 
 
-add_action('template_redirect', 'ft_redirect_old_cpt_urls');
-function ft_redirect_old_cpt_urls() {
-    global $post, $wp;
-
+add_action('parse_request', 'ft_redirect_old_cpt_urls');
+function ft_redirect_old_cpt_urls($wp) {
     $options = get_option('propfirm_ftplugin_settings');
-    if (isset($options['select_cpt']) && is_404()) {
-        $slug = get_query_var('name');
-        $post_exists = get_page_by_path($slug, OBJECT, $options['select_cpt']);
-
-        if ($post_exists) {
-            $expected_url = get_permalink($post_exists->ID);
-            wp_redirect($expected_url, 301);
-            exit;
+    if (isset($options['select_cpt'])) {
+        $cpt_base = $options['select_cpt'];
+        if (isset($wp->query_vars['post_type']) && $wp->query_vars['post_type'] == $cpt_base && isset($wp->query_vars['name'])) {
+            $post = get_page_by_path($wp->query_vars['name'], OBJECT, $cpt_base);
+            if ($post) {
+                $categories = get_the_terms($post->ID, 'category');
+                if ($categories && !is_wp_error($categories)) {
+                    $category_slug = $categories[0]->slug; // Ambil kategori pertama jika ada beberapa kategori
+                    $new_url = home_url("/{$cpt_base}/{$category_slug}/{$post->post_name}/");
+                    wp_redirect($new_url, 301);
+                    exit;
+                }
+            }
         }
     }
 }
+
 
 
 
