@@ -58,10 +58,7 @@ add_action('init', 'ft_add_category_rewrite_rules');
 function ft_add_category_rewrite_rules() {
     $options = get_option('propfirm_ftplugin_settings');
     if (isset($options['select_cpt'])) {
-        // Hanya tambahkan rewrite rule jika permintaan bukan ke post
-        if (!get_page_by_path(get_query_var('name'), OBJECT, $options['select_cpt'])) {
-            add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/?$', 'index.php?category_name=$matches[1]', 'top');
-        }
+        add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/?$', 'index.php?category_name=$matches[1]', 'top');
     }
 }
 
