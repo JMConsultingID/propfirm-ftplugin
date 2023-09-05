@@ -85,7 +85,7 @@ add_action('template_redirect', 'ft_redirect_old_cpt_urls');
 function ft_redirect_old_cpt_urls() {
     global $post;
 
-    $options = get_option('ft_permalink_settings');
+    $options = get_option('propfirm_ftplugin_settings');
     if (is_singular($options['select_cpt'])) {
         // Dapatkan kategori pertama dari post
         $categories = get_the_terms($post->ID, 'category');
