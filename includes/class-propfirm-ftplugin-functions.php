@@ -6,8 +6,6 @@ function propfirm_ftplugin_menu() {
     add_menu_page('FT Plugin', 'FT Plugin', 'manage_options', 'propfirm-ftplugin', 'propfirm_ftplugin_settings_page', 'dashicons-admin-generic', 22);
     add_submenu_page('propfirm-ftplugin','FT Permalink','FT Permalink','manage_options','propfirm-ftplugin-permalink','propfirm_ftplugin_permalink_settings_page'
     );
-    add_submenu_page('propfirm-ftplugin','FT Beta','FT Beta','manage_options','propfirm-ftplugin',''
-    );
 }
 
 // Fungsi untuk menampilkan halaman settings
