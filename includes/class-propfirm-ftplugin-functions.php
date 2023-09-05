@@ -4,7 +4,7 @@ add_action('admin_menu', 'propfirm_ftplugin_menu');
 
 function propfirm_ftplugin_menu() {
     add_menu_page('FT Plugin', 'FT Plugin', 'manage_options', 'propfirm-ftplugin', 'propfirm_ftplugin_settings_page', 'dashicons-admin-generic', 22);
-    add_submenu_page('propfirm-ftplugin','FT Permalink','FT Permalink','manage_options','propfirm-ftplugin-permalink','propfirm_ftplugin_settings_page'
+    add_submenu_page('propfirm-ftplugin','FT Permalink','FT Permalink','manage_options','propfirm-ftplugin-permalink','propfirm_ftplugin_permalink_settings_page'
     );
     add_submenu_page('propfirm-ftplugin','FT Beta','FT Beta','manage_options','propfirm-ftplugin',''
     );
@@ -12,6 +12,16 @@ function propfirm_ftplugin_menu() {
 
 // Fungsi untuk menampilkan halaman settings
 function propfirm_ftplugin_settings_page() {
+    ?>
+    <div class="wrap">
+        <h2>FT Plugin - Funded Trading</h2>
+        <p>This plugin is to support Funded Trading Website Technology, Enjoy Using this Plugin.</p> 
+    </div>
+    <?php
+}
+
+// Fungsi untuk menampilkan halaman settings
+function propfirm_ftplugin_permalink_settings_page() {
     ?>
     <div class="wrap">
         <h2>FT Permalink Settings</h2>
