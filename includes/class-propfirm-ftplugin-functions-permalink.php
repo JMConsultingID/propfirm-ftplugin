@@ -44,9 +44,11 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_add_category_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/?$', 'index.php?category_name=$matches[1]', 'top');
+            add_rewrite_rule('-category/([^/]+)/?$', 'index.php?category_name=$matches[1]', 'top');
         }
     }
+
+    
 
     add_action('pre_get_posts', 'ft_modify_category_query');
     function ft_modify_category_query($query) {
