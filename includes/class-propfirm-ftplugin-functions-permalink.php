@@ -103,7 +103,7 @@ function ft_redirect_old_post_urls() {
         }
 
     } else{
-        	error_log('select_cpt tidak ditemukan'.$options['select_cpt']);
+        	error_log('Post type: ' . $post->post_type);
         }
 }
 
