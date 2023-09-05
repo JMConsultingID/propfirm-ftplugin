@@ -58,11 +58,20 @@ function deactivate_propfirm_ftplugin() {
 register_activation_hook( __FILE__, 'activate_propfirm_ftplugin' );
 register_deactivation_hook( __FILE__, 'deactivate_propfirm_ftplugin' );
 
+function filter_action_propfirm_ftplugin_links( $links ) {
+     $links['settings'] = '<a href="' . admin_url( 'admin.php?page=propfirm-ftplugin' ) . '">' . __( 'Settings', 'propfirm-ftplugin' ) . '</a>';
+     $links['support'] = '<a href="' . admin_url( 'admin.php?page=propfirm-ftplugin' ) . '">' . __( 'Doc', 'propfirm-ftplugin' ) . '</a>';
+     return $links;
+}
+add_filter( 'plugin_action_links_propfirm-ftplugin/propfirm-ftplugin.php', 'filter_action_propfirm_ftplugin_links', 10, 1 );
+
 /**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-propfirm-ftplugin.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-propfirm-ftplugin-functions.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-propfirm-ftplugin-functions-permalink.php';
 
 /**
  * Begins execution of the plugin.
