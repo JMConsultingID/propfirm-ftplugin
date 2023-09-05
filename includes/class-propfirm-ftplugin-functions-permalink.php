@@ -76,24 +76,13 @@ function ft_redirect_old_cpt_urls() {
     global $post;
 
     $options = get_option('propfirm_ftplugin_settings');
-    if (is_singular($options['select_cpt'])) {
-        // Dapatkan kategori pertama dari post
-        $categories = get_the_terms($post->ID, 'category');
-        if ($categories && !is_wp_error($categories)) {
-            $category = array_shift($categories);
-            $category_slug = $category->slug;
+    if (isset($options['select_cpt']) && is_singular($options['select_cpt'])) {
+        $current_url = home_url(add_query_arg(array(), $wp->request));
+        $expected_url = get_permalink($post->ID);
 
-            // Membuat URL baru
-            $new_url = home_url($options['select_cpt'] . '/' . $category_slug . '/' . $post->post_name . '/');
-            
-            // Jika URL saat ini tidak sama dengan URL baru, arahkan ulang
-            if (get_permalink($post->ID) !== $new_url) {
-                error_log("Redirecting from " . get_permalink($post->ID) . " to " . $new_url); // Log untuk debugging
-                wp_redirect($new_url, 301); // 301 adalah kode status untuk pengalihan permanen
-                exit;
-            }
-        } else {
-            error_log("No category found for post with ID " . $post->ID); // Log untuk debugging
+        if ($current_url != $expected_url) {
+            wp_redirect($expected_url, 301);
+            exit;
         }
     }
 }
