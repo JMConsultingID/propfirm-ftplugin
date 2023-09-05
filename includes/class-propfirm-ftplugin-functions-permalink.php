@@ -101,8 +101,6 @@ function ft_redirect_old_post_urls() {
     }
 }
 
-
-
 }
 // end enable plugin
 
