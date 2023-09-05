@@ -89,6 +89,9 @@ function ft_redirect_old_cpt_urls_to_new() {
                 exit;
             }
         }
+    } elseif (isset($options['select_cpt']) && is_category()) {
+        // Jika kita berada di halaman kategori, pastikan kita tidak mengarahkan ulang
+        remove_action('template_redirect', 'ft_redirect_old_cpt_urls_to_new');
     }
 }
 
