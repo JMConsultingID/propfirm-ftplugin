@@ -80,12 +80,10 @@ function ft_redirect_old_post_urls() {
     	return;
 	}
 
-    global $post;
-
     // Pastikan kita berada di halaman single dari custom post type yang relevan dan 'select_cpt' telah diatur
     if (is_singular($options['select_cpt']) && isset($options['select_cpt'])) {
         // Dapatkan kategori dari postingan saat ini
-        $categories = get_the_category($post->ID);
+        $categories = get_the_terms($post->ID, 'category');
 
         // Jika postingan memiliki kategori
         if ($categories) {
@@ -102,11 +100,6 @@ function ft_redirect_old_post_urls() {
 			}
         }
     }
-}
-
-add_action('template_redirect', 'ft_test_template_redirect');
-function ft_test_template_redirect() {
-    error_log('template_redirect hook is working');
 }
 
 }
