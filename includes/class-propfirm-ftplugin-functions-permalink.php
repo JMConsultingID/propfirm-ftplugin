@@ -69,8 +69,9 @@ function ft_modify_category_query($query) {
     }
 }
 
-add_action('template_redirect', 'ft_redirect_old_post_urls');
+add_action('template_redirect', 'ft_redirect_old_post_urls',20);
 function ft_redirect_old_post_urls() {
+	global $post; // Pastikan Anda memiliki akses ke variabel global $post
     $options = get_option('propfirm_ftplugin_settings');
 
     // Jika opsi redirect tidak diaktifkan, keluar dari fungsi
@@ -78,8 +79,6 @@ function ft_redirect_old_post_urls() {
         error_log('Redirect not enabled'); // Ini akan mencatat jika opsi redirect tidak diaktifkan
     	return;
 	}
-
-    global $post;
 
     // Pastikan kita berada di halaman single dari custom post type yang relevan dan 'select_cpt' telah diatur
     if (isset($options['select_cpt']) && $post->post_type == $options['select_cpt']) {
