@@ -73,19 +73,21 @@ function ft_modify_category_query($query) {
 
 add_action('template_redirect', 'ft_redirect_old_cpt_urls');
 function ft_redirect_old_cpt_urls() {
-    global $post;
+    global $post, $wp;
 
     $options = get_option('propfirm_ftplugin_settings');
-    if (isset($options['select_cpt']) && is_singular($options['select_cpt'])) {
-        $current_url = home_url(add_query_arg(array(), $wp->request));
-        $expected_url = get_permalink($post->ID);
+    if (isset($options['select_cpt']) && is_404()) {
+        $slug = get_query_var('name');
+        $post_exists = get_page_by_path($slug, OBJECT, $options['select_cpt']);
 
-        if ($current_url != $expected_url) {
+        if ($post_exists) {
+            $expected_url = get_permalink($post_exists->ID);
             wp_redirect($expected_url, 301);
             exit;
         }
     }
 }
+
 
 
 }
