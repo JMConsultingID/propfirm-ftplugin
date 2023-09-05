@@ -25,7 +25,7 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_add_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'top');
+            add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'top');
         }
     }
 
@@ -59,12 +59,19 @@ if (is_propfirm_ftplugin_enabled()) {
     add_action('template_redirect', 'ft_redirect_old_cpt_urls_to_new');
     function ft_redirect_old_cpt_urls_to_new() {
         $options = get_option('propfirm_ftplugin_settings');
+
         // Memeriksa apakah select_redirect diaktifkan
         if (!isset($options['select_redirect']) || $options['select_redirect'] !== 'enable') {
             return; // Jika tidak diaktifkan, keluar dari fungsi
         }
 
         global $post;
+
+        // Jika ini adalah halaman atau post biasa, keluar dari fungsi
+        if (is_page() || is_singular('post')) {
+            return;
+        }
+
         if (isset($options['select_cpt']) && is_single() && $post->post_type == $options['select_cpt']) {
             $categories = get_the_terms($post->ID, 'category');
             if ($categories && !is_wp_error($categories)) {
