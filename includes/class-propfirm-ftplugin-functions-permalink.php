@@ -103,6 +103,11 @@ function ft_redirect_old_post_urls() {
     }
 }
 
+add_action('template_redirect', 'ft_test_template_redirect');
+function ft_test_template_redirect() {
+    error_log('template_redirect hook is working');
+}
+
 }
 // end enable plugin
 
