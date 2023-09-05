@@ -24,10 +24,20 @@ if (is_propfirm_ftplugin_enabled()) {
     add_action('init', 'ft_add_rewrite_rules');
     function ft_add_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
+        global $post;
+        // Jika ini adalah halaman atau post biasa, keluar dari fungsi
+        if (is_page() || is_singular('post')) {
+            return;
+        }
         if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'top');
+            $categories = get_categories(array('hide_empty' => 0));
+            foreach ($categories as $category) {
+                // Untuk setiap kategori, tambahkan rewrite rule yang spesifik
+                add_rewrite_rule('^' . $category->slug . '/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[1]', 'top');
+            }
         }
     }
+
 
     // Mengubah link kategori
     add_filter('term_link', 'ft_custom_category_permalink', 10, 3);
