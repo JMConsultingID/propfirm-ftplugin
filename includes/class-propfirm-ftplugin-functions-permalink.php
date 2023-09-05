@@ -71,7 +71,6 @@ function ft_modify_category_query($query) {
 
 add_action('template_redirect', 'ft_redirect_old_post_urls');
 function ft_redirect_old_post_urls() {
-	error_log('template_redirect ft_redirect_old_post_urls hook is working');
     $options = get_option('propfirm_ftplugin_settings');
 
     // Jika opsi redirect tidak diaktifkan, keluar dari fungsi
@@ -105,7 +104,7 @@ function ft_redirect_old_post_urls() {
         }
 
     } else{
-        	error_log('select_cpt not recognise');
+        	error_log('select_cpt tidak ditemukan'.$options['select_cpt']);
         }
 }
 
