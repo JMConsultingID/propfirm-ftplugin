@@ -63,6 +63,8 @@ register_deactivation_hook( __FILE__, 'deactivate_propfirm_ftplugin' );
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-propfirm-ftplugin.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-propfirm-ftplugin-functions.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-propfirm-ftplugin-functions-permalink.php';
 
 /**
  * Begins execution of the plugin.
