@@ -25,9 +25,32 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_add_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'bottom');
+            add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/([^/]+)/?$', 'index.php?ft_cpt=' . $options['select_cpt'] . '&ft_name=$matches[2]', 'top');
+            add_rewrite_rule('^' . $options['select_cpt'] . '/([^/]+)/?$', 'index.php?ft_category_name=$matches[1]', 'top');
         }
     }
+
+    add_filter('query_vars', 'ft_add_query_vars');
+    function ft_add_query_vars($vars) {
+        $vars[] = 'ft_cpt';
+        $vars[] = 'ft_name';
+        $vars[] = 'ft_category_name';
+        return $vars;
+    }
+
+    add_action('pre_get_posts', 'ft_modify_query_based_on_vars');
+    function ft_modify_query_based_on_vars($query) {
+        if (!is_admin() && $query->is_main_query()) {
+            if (get_query_var('ft_cpt') && get_query_var('ft_name')) {
+                $query->set('post_type', get_query_var('ft_cpt'));
+                $query->set('name', get_query_var('ft_name'));
+            } elseif (get_query_var('ft_category_name')) {
+                $query->set('category_name', get_query_var('ft_category_name'));
+            }
+        }
+    }
+
+
 
     // Mengubah link kategori
     add_filter('term_link', 'ft_custom_category_permalink', 10, 3);
@@ -39,15 +62,6 @@ if (is_propfirm_ftplugin_enabled()) {
         return $url;
     }
 
-    // Menambahkan rewrite rules untuk kategori
-    add_action('init', 'ft_add_category_rewrite_rules');
-    function ft_add_category_rewrite_rules() {
-        $options = get_option('propfirm_ftplugin_settings');
-        if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/?$', 'index.php?category_name=$matches[1]', 'bottom');
-
-        }
-    }
 
     add_action('pre_get_posts', 'ft_modify_category_query');
     function ft_modify_category_query($query) {
