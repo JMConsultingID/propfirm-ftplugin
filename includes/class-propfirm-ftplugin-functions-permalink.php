@@ -43,6 +43,13 @@ if (is_propfirm_ftplugin_enabled()) {
     add_action('init', 'ft_add_category_rewrite_rules');
     function ft_add_category_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
+
+        global $post;
+        // Jika ini adalah halaman atau post biasa, keluar dari fungsi
+        if (is_page() || is_singular('post')) {
+            return;
+        }
+
         if (isset($options['select_cpt'])) {
             $categories = get_categories(array('hide_empty' => 0));
             foreach ($categories as $category) {
