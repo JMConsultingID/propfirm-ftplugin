@@ -24,10 +24,20 @@ if (is_propfirm_ftplugin_enabled()) {
     add_action('init', 'ft_add_rewrite_rules');
     function ft_add_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
+        global $post;
+        // Jika ini adalah halaman atau post biasa, keluar dari fungsi
+        if (is_page() || is_singular('post')) {
+            return;
+        }
         if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[2]', 'top');
+            $categories = get_categories(array('hide_empty' => 0));
+            foreach ($categories as $category) {
+                // Untuk setiap kategori, tambahkan rewrite rule yang spesifik
+                add_rewrite_rule('^' . $category->slug . '/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[1]', 'top');
+            }
         }
     }
+
 
     // Mengubah link kategori
     add_filter('term_link', 'ft_custom_category_permalink', 10, 3);
@@ -43,28 +53,37 @@ if (is_propfirm_ftplugin_enabled()) {
     add_action('init', 'ft_add_category_rewrite_rules');
     function ft_add_category_rewrite_rules() {
         $options = get_option('propfirm_ftplugin_settings');
-        if (isset($options['select_cpt'])) {
-            add_rewrite_rule('([^/]+)/?$', 'index.php?category_name=$matches[1]', 'top');
-        }
-    }
 
-    add_action('pre_get_posts', 'ft_modify_category_query');
-    function ft_modify_category_query($query) {
-        $options = get_option('propfirm_ftplugin_settings');
-        if (!is_admin() && $query->is_category() && $query->is_main_query() && isset($options['select_cpt'])) {
-            $query->set('post_type', $options['select_cpt']);
+        global $post;
+        // Jika ini adalah halaman atau post biasa, keluar dari fungsi
+        if (is_page() || is_singular('post')) {
+            return;
+        }
+
+        if (isset($options['select_cpt'])) {
+            $categories = get_categories(array('hide_empty' => 0));
+            foreach ($categories as $category) {
+                add_rewrite_rule('^' . $category->slug . '/?$', 'index.php?category_name=' . $category->slug, 'top');
+            }
         }
     }
 
     add_action('template_redirect', 'ft_redirect_old_cpt_urls_to_new');
     function ft_redirect_old_cpt_urls_to_new() {
         $options = get_option('propfirm_ftplugin_settings');
+
         // Memeriksa apakah select_redirect diaktifkan
         if (!isset($options['select_redirect']) || $options['select_redirect'] !== 'enable') {
             return; // Jika tidak diaktifkan, keluar dari fungsi
         }
 
         global $post;
+
+        // Jika ini adalah halaman atau post biasa, keluar dari fungsi
+        if (is_page() || is_singular('post')) {
+            return;
+        }
+
         if (isset($options['select_cpt']) && is_single() && $post->post_type == $options['select_cpt']) {
             $categories = get_the_terms($post->ID, 'category');
             if ($categories && !is_wp_error($categories)) {
@@ -77,6 +96,27 @@ if (is_propfirm_ftplugin_enabled()) {
             }
         }
     }
+
+    add_filter('request', 'ft_custom_request_filter');
+    function ft_custom_request_filter($query_vars) {
+        $options = get_option('propfirm_ftplugin_settings');
+
+        if (isset($options['select_cpt'])) {
+            // Jika ini adalah permintaan untuk single post dari custom post type
+            if (isset($query_vars['name']) && isset($query_vars['post_type']) && $query_vars['post_type'] == $options['select_cpt']) {
+                return $query_vars;
+            }
+
+            // Jika ini adalah permintaan untuk kategori
+            if (isset($query_vars['category_name'])) {
+                $query_vars['post_type'] = $options['select_cpt'];
+                return $query_vars;
+            }
+        }
+
+        return $query_vars;
+    }
+
 }
 
 // Flush rewrite rules saat plugin diaktifkan
