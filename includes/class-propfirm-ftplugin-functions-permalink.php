@@ -4,8 +4,17 @@ function is_propfirm_ftplugin_enabled() {
     return isset($options['enable_plugin']) && $options['enable_plugin'] == 'enable';
 }
 
+function ft_required_options_set() {
+    $options = get_option('propfirm_ftplugin_settings');
+    return isset($options['select_cpt']) && !empty($options['select_cpt']) && isset($options['select_taxonomy']) && !empty($options['select_taxonomy']);
+}
+
+
 //enable plugin
 if (is_propfirm_ftplugin_enabled()) {
+    if (!ft_required_options_set()) {
+        return; // Jika custom post type atau custom taxonomy belum diatur, keluar dari fungsi
+    }
 
     // Mengubah link post
     add_filter('post_type_link', 'ft_custom_permalink_structure', 10, 2);
@@ -106,7 +115,7 @@ if (is_propfirm_ftplugin_enabled()) {
         }
         return $query_vars;
     }
-    
+
 }
 
 // Flush rewrite rules saat plugin diaktifkan

@@ -57,6 +57,8 @@ function propfirm_ftplugin_settings_init() {
     add_settings_field('ft_select_cpt', 'Select Custom Post Type', 'ft_select_cpt_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_taxonomy', 'Select Taxonomy', 'ft_select_taxonomy_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_redirect_old_url', 'Redirect old URL', 'ft_select_redirect_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_flush_rewrite', 'Flush Rewrite Rules', 'ft_flush_rewrite_rules_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_reset_settings', 'Reset Plugin Settings', 'ft_reset_settings_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
 }
 
 function ft_enable_plugin_callback() {
@@ -102,4 +104,31 @@ function ft_select_redirect_callback() {
           </select>';
 }
 
+function ft_flush_rewrite_rules_callback() {
+    echo '<input type="submit" name="ft_flush_rewrite" value="Flush Rewrite Rules" class="button">';
+}
 
+if (isset($_POST['ft_flush_rewrite'])) {
+    flush_rewrite_rules();
+    // Anda bisa menambahkan pesan admin jika Anda mau
+    add_action('admin_notices', 'ft_flush_rewrite_notice');
+}
+
+function ft_flush_rewrite_notice() {
+    echo '<div class="updated"><p>Rewrite rules have been flushed.</p></div>';
+}
+
+
+function ft_reset_settings_callback() {
+    echo '<input type="submit" name="ft_reset_settings" value="Reset Settings" class="button">';
+}
+
+if (isset($_POST['ft_reset_settings'])) {
+    delete_option('propfirm_ftplugin_settings');
+    // Anda bisa menambahkan pesan admin jika Anda mau
+    add_action('admin_notices', 'ft_settings_reset_notice');
+}
+
+function ft_settings_reset_notice() {
+    echo '<div class="updated"><p>Plugin settings have been reset.</p></div>';
+}
