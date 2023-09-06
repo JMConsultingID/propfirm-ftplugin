@@ -90,7 +90,7 @@ function ft_select_taxonomy_callback() {
 
     echo '<select name="propfirm_ftplugin_settings[select_taxonomy]">';
     foreach ($taxonomies as $taxonomy) {
-        echo '<option value="' . esc_attr($taxonomy->name) . '" ' . selected($selected_taxonomy, $taxonomy->name, false) . '>' . esc_html($taxonomy->labels->name) . '</option>';
+        echo '<option value="' . esc_attr($taxonomy->name) . '" ' . selected($selected_taxonomy, $taxonomy->name, false) . '>' . esc_attr($taxonomy->name) . '-' . esc_html($taxonomy->labels->name) . '</option>';
     }
     echo '</select>';
 }
