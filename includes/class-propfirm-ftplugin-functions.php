@@ -31,10 +31,13 @@ function propfirm_ftplugin_permalink_settings_page() {
         <p>This is the settings page for the FT Permalink plugin. You can change the permalink structure for custom post types here.<br/> 
         After making changes in the FT Permalink Plugin, do the Following:
         <ol>
-            <li>Make sure to reactivate your plugin so that the rewrite rules are updated.</li>
-            <li>You may need to flush the rewrite rules in WordPress. You can do this by going back to <strong>"Settings" > "Permalinks"</strong> page in your WordPress dashboard and click <strong>"Save Changes"</strong> to ensure the rewrite rules are updated.</li>
+            <li>Make sure you are with an SEO expert to set up this plugin</li>
+            <li>After set up this plugin, You may need to flush the rewrite rules in WordPress. You can do this by going back to <strong>"Settings" > "Permalinks"</strong> page in your WordPress dashboard and click <strong>"Save Changes"</strong> to ensure the rewrite rules are updated.</li>
+            <li>If you have any questions, please send an email to ardi@jm-consulting.id.</li>     
             <li>Enjoy Using this Plugin.</li>
         </ol>
+        </p>
+        <p>Note :<br/>Attention! Be careful in the redirect new url section because it will affect SEO, make sure you know basic SEO or at least you are with an SEO expert to activate redirect to new url.
         </p> <!-- Deskripsi yang ditambahkan -->
         <form method="post" action="options.php">
             <?php
