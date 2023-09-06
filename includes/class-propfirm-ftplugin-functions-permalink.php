@@ -15,6 +15,8 @@ if (is_propfirm_ftplugin_enabled()) {
     if (!ft_required_options_set()) {
         return; // Jika custom post type atau custom taxonomy belum diatur, keluar dari fungsi
     }
+    //Menambah Arg Archive
+    add_action('init', 'ft_modify_cpt_args');
     // Mengubah link post
     add_filter('post_type_link', 'ft_custom_permalink_structure', 10, 2);
     // Menambahkan rewrite rules
@@ -28,6 +30,21 @@ if (is_propfirm_ftplugin_enabled()) {
     // Menambahkan fungsi request_filter
     add_filter('request', 'ft_custom_request_filter');    
 }
+
+
+
+function ft_modify_cpt_args() {
+    $options = get_option('propfirm_ftplugin_settings');
+    if (isset($options['select_cpt'])) {
+        $post_type_object = get_post_type_object($options['select_cpt']);
+        if ($post_type_object) {
+            $post_type_object->has_archive = true;
+            register_post_type($options['select_cpt'], $post_type_object);
+        }
+    }
+}
+
+
 
 function ft_custom_permalink_structure($post_link, $post) {
     $options = get_option('propfirm_ftplugin_settings');
