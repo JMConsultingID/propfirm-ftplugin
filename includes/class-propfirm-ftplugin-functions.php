@@ -55,7 +55,11 @@ function propfirm_ftplugin_settings_init() {
     add_settings_section('propfirm_ftplugin_general_section', 'General Settings', null, 'propfirm-ftplugin');
     add_settings_field('ft_enable_plugin', 'Enable Plugin', 'ft_enable_plugin_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_cpt', 'Select Custom Post Type', 'ft_select_cpt_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_select_taxonomy', 'Select Taxonomy', 'ft_select_taxonomy_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_archive_enable', 'Post Type Archive', 'ft_post_type_archive_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_redirect_old_url', 'Redirect old URL', 'ft_select_redirect_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_flush_rewrite', 'Flush Rewrite Rules', 'ft_flush_rewrite_rules_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    //add_settings_field('ft_reset_settings', 'Reset Plugin Settings', 'ft_reset_settings_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
 }
 
 function ft_enable_plugin_callback() {
@@ -78,6 +82,29 @@ function ft_select_cpt_callback() {
     echo '</select>';
 }
 
+function ft_select_taxonomy_callback() {
+    $options = get_option('propfirm_ftplugin_settings');
+    $selected_taxonomy = isset($options['select_taxonomy']) ? $options['select_taxonomy'] : '';
+
+    $taxonomies = get_taxonomies(array('public' => true), 'objects');
+
+    echo '<select name="propfirm_ftplugin_settings[select_taxonomy]">';
+    foreach ($taxonomies as $taxonomy) {
+        echo '<option value="' . esc_attr($taxonomy->name) . '" ' . selected($selected_taxonomy, $taxonomy->name, false) . '>' . esc_html($taxonomy->labels->name) . '</option>';
+    }
+    echo '</select>';
+}
+
+function ft_post_type_archive_callback() {
+    $options = get_option('propfirm_ftplugin_settings');
+    $value = isset($options['archive_enable']) ? $options['archive_enable'] : 'disable';
+    echo '<select name="propfirm_ftplugin_settings[archive_enable]">
+            <option value="enable" '.selected($value, 'enable', false).'>Enable</option>
+            <option value="disable" '.selected($value, 'disable', false).'>Disable</option>
+          </select>';
+}
+
+
 function ft_select_redirect_callback() {
     $options = get_option('propfirm_ftplugin_settings');
     $value = isset($options['select_redirect']) ? $options['select_redirect'] : 'disable';
@@ -87,4 +114,46 @@ function ft_select_redirect_callback() {
           </select>';
 }
 
+function ft_flush_rewrite_rules_callback() {
+    echo '<input type="submit" name="ft_flush_rewrite" value="Flush Rewrite Rules" class="button">';
+}
 
+if (isset($_POST['ft_flush_rewrite'])) {
+    flush_rewrite_rules();
+    // Anda bisa menambahkan pesan admin jika Anda mau
+    add_action('admin_notices', 'ft_flush_rewrite_notice');
+}
+
+function ft_flush_rewrite_notice() {
+    echo '<div class="updated"><p>Rewrite rules have been flushed.</p></div>';
+}
+
+
+function ft_reset_settings_callback() {
+    echo '<input type="submit" name="ft_reset_settings" value="Reset Settings" class="button">';
+}
+
+add_action('admin_init', 'ft_handle_reset_settings');
+function ft_handle_reset_settings() {
+    if (isset($_POST['ft_reset_settings'])) {
+        delete_option('propfirm_ftplugin_settings');
+        add_action('admin_notices', 'ft_settings_reset_notice');
+    }
+}
+
+function ft_settings_reset_notice() {
+    echo '<div class="updated"><p>Plugin settings have been reset.</p></div>';
+}
+
+// Flush rewrite rules saat plugin diaktifkan
+register_activation_hook(__FILE__, 'ft_flush_rewrite_rules');
+function ft_flush_rewrite_rules() {
+    ft_add_rewrite_rules();
+    flush_rewrite_rules();
+}
+
+// Flush rewrite rules saat plugin dinonaktifkan
+register_deactivation_hook(__FILE__, 'ft_flush_rewrite_rules_deactivate');
+function ft_flush_rewrite_rules_deactivate() {
+    flush_rewrite_rules();
+}
