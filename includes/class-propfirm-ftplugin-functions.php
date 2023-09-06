@@ -123,10 +123,12 @@ function ft_reset_settings_callback() {
     echo '<input type="submit" name="ft_reset_settings" value="Reset Settings" class="button">';
 }
 
-if (isset($_POST['ft_reset_settings'])) {
-    delete_option('propfirm_ftplugin_settings');
-    // Anda bisa menambahkan pesan admin jika Anda mau
-    add_action('admin_notices', 'ft_settings_reset_notice');
+add_action('admin_init', 'ft_handle_reset_settings');
+function ft_handle_reset_settings() {
+    if (isset($_POST['ft_reset_settings'])) {
+        delete_option('propfirm_ftplugin_settings');
+        add_action('admin_notices', 'ft_settings_reset_notice');
+    }
 }
 
 function ft_settings_reset_notice() {
