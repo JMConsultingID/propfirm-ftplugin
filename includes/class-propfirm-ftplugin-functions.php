@@ -58,7 +58,7 @@ function propfirm_ftplugin_settings_init() {
     add_settings_field('ft_select_taxonomy', 'Select Taxonomy', 'ft_select_taxonomy_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_redirect_old_url', 'Redirect old URL', 'ft_select_redirect_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_flush_rewrite', 'Flush Rewrite Rules', 'ft_flush_rewrite_rules_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
-    add_settings_field('ft_reset_settings', 'Reset Plugin Settings', 'ft_reset_settings_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    //add_settings_field('ft_reset_settings', 'Reset Plugin Settings', 'ft_reset_settings_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
 }
 
 function ft_enable_plugin_callback() {
@@ -133,4 +133,17 @@ function ft_handle_reset_settings() {
 
 function ft_settings_reset_notice() {
     echo '<div class="updated"><p>Plugin settings have been reset.</p></div>';
+}
+
+// Flush rewrite rules saat plugin diaktifkan
+register_activation_hook(__FILE__, 'ft_flush_rewrite_rules');
+function ft_flush_rewrite_rules() {
+    ft_add_rewrite_rules();
+    flush_rewrite_rules();
+}
+
+// Flush rewrite rules saat plugin dinonaktifkan
+register_deactivation_hook(__FILE__, 'ft_flush_rewrite_rules_deactivate');
+function ft_flush_rewrite_rules_deactivate() {
+    flush_rewrite_rules();
 }
