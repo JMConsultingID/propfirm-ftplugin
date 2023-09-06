@@ -55,6 +55,7 @@ function propfirm_ftplugin_settings_init() {
     add_settings_section('propfirm_ftplugin_general_section', 'General Settings', null, 'propfirm-ftplugin');
     add_settings_field('ft_enable_plugin', 'Enable Plugin', 'ft_enable_plugin_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_cpt', 'Select Custom Post Type', 'ft_select_cpt_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_select_taxonomy', 'Select Taxonomy', 'ft_select_taxonomy_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_redirect_old_url', 'Redirect old URL', 'ft_select_redirect_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
 }
 
@@ -77,6 +78,20 @@ function ft_select_cpt_callback() {
     }
     echo '</select>';
 }
+
+function ft_select_taxonomy_callback() {
+    $options = get_option('propfirm_ftplugin_settings');
+    $selected_taxonomy = isset($options['select_taxonomy']) ? $options['select_taxonomy'] : '';
+
+    $taxonomies = get_taxonomies(array('public' => true), 'objects');
+
+    echo '<select name="propfirm_ftplugin_settings[select_taxonomy]">';
+    foreach ($taxonomies as $taxonomy) {
+        echo '<option value="' . esc_attr($taxonomy->name) . '" ' . selected($selected_taxonomy, $taxonomy->name, false) . '>' . esc_html($taxonomy->labels->name) . '</option>';
+    }
+    echo '</select>';
+}
+
 
 function ft_select_redirect_callback() {
     $options = get_option('propfirm_ftplugin_settings');

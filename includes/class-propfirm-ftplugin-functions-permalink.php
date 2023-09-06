@@ -12,7 +12,7 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_custom_permalink_structure($post_link, $post) {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt']) && $post->post_type == $options['select_cpt']) {
-            $terms = get_the_terms($post->ID, 'casino-category');
+            $terms = get_the_terms($post->ID, $options['select_taxonomy']);
             if ($terms) {
                 return home_url($terms[0]->slug . '/' . $post->post_name . '/');
             }
@@ -31,7 +31,7 @@ if (is_propfirm_ftplugin_enabled()) {
             return;
         }
         if (isset($options['select_cpt'])) {
-            $casino_categories = get_terms(array('taxonomy' => 'casino-category', 'hide_empty' => 0));
+            $casino_categories = get_terms(array('taxonomy' => $options['select_taxonomy'], 'hide_empty' => 0));
             foreach ($casino_categories as $category) {
                 add_rewrite_rule('^' . $category->slug . '/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[1]', 'top');
             }
@@ -43,7 +43,7 @@ if (is_propfirm_ftplugin_enabled()) {
     add_filter('term_link', 'ft_custom_category_permalink', 10, 3);
     function ft_custom_category_permalink($url, $term, $taxonomy) {
         $options = get_option('propfirm_ftplugin_settings');
-        if ($taxonomy == 'casino-category' && isset($options['select_cpt'])) {
+        if ($taxonomy == $options['select_taxonomy'] && isset($options['select_cpt'])) {
             return home_url($term->slug . '/');
         }
         return $url;
@@ -62,7 +62,7 @@ if (is_propfirm_ftplugin_enabled()) {
         }
 
         if (isset($options['select_cpt'])) {
-            $casino_categories = get_terms(array('taxonomy' => 'casino-category', 'hide_empty' => 0));
+            $casino_categories = get_terms(array('taxonomy' => $options['select_taxonomy'], 'hide_empty' => 0));
             foreach ($casino_categories as $category) {
                 add_rewrite_rule('^' . $category->slug . '/?$', 'index.php?casino-category=' . $category->slug, 'top');
             }
@@ -86,7 +86,7 @@ if (is_propfirm_ftplugin_enabled()) {
         }
 
         if (isset($options['select_cpt']) && is_single() && $post->post_type == $options['select_cpt']) {
-            $casino_categories = get_the_terms($post->ID, 'casino-category');
+            $casino_categories = get_the_terms($post->ID, $options['select_taxonomy']);
             if ($casino_categories && !is_wp_error($casino_categories)) {
                 $category_slug = $casino_categories[0]->slug;
                 $expected_url = home_url("/{$category_slug}/{$post->post_name}/");
@@ -101,7 +101,7 @@ if (is_propfirm_ftplugin_enabled()) {
     add_filter('request', 'ft_custom_request_filter');
     function ft_custom_request_filter($query_vars) {
         $options = get_option('propfirm_ftplugin_settings');
-        if (isset($query_vars['casino-category']) && isset($options['select_cpt'])) {
+        if (isset($query_vars[$options['select_taxonomy']]) && isset($options['select_cpt'])) {
             $query_vars['post_type'] = $options['select_cpt'];
         }
         return $query_vars;
