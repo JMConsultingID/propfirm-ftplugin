@@ -12,13 +12,14 @@ if (is_propfirm_ftplugin_enabled()) {
     function ft_custom_permalink_structure($post_link, $post) {
         $options = get_option('propfirm_ftplugin_settings');
         if (isset($options['select_cpt']) && $post->post_type == $options['select_cpt']) {
-            $terms = get_the_terms($post->ID, 'category');
+            $terms = get_the_terms($post->ID, 'casino-category');
             if ($terms) {
                 return home_url($terms[0]->slug . '/' . $post->post_name . '/');
             }
         }
         return $post_link;
     }
+
 
     // Menambahkan rewrite rules
     add_action('init', 'ft_add_rewrite_rules');
@@ -30,9 +31,8 @@ if (is_propfirm_ftplugin_enabled()) {
             return;
         }
         if (isset($options['select_cpt'])) {
-            $categories = get_categories(array('hide_empty' => 0));
-            foreach ($categories as $category) {
-                // Untuk setiap kategori, tambahkan rewrite rule yang spesifik
+            $casino_categories = get_terms(array('taxonomy' => 'casino-category', 'hide_empty' => 0));
+            foreach ($casino_categories as $category) {
                 add_rewrite_rule('^' . $category->slug . '/([^/]+)/?$', 'index.php?post_type=' . $options['select_cpt'] . '&name=$matches[1]', 'top');
             }
         }
@@ -43,11 +43,12 @@ if (is_propfirm_ftplugin_enabled()) {
     add_filter('term_link', 'ft_custom_category_permalink', 10, 3);
     function ft_custom_category_permalink($url, $term, $taxonomy) {
         $options = get_option('propfirm_ftplugin_settings');
-        if ($taxonomy == 'category' && isset($options['select_cpt'])) {
+        if ($taxonomy == 'casino-category' && isset($options['select_cpt'])) {
             return home_url($term->slug . '/');
         }
         return $url;
     }
+
 
     // Menambahkan rewrite rules untuk kategori
     add_action('init', 'ft_add_category_rewrite_rules');
@@ -61,9 +62,9 @@ if (is_propfirm_ftplugin_enabled()) {
         }
 
         if (isset($options['select_cpt'])) {
-            $categories = get_categories(array('hide_empty' => 0));
-            foreach ($categories as $category) {
-                add_rewrite_rule('^' . $category->slug . '/?$', 'index.php?category_name=' . $category->slug, 'top');
+            $casino_categories = get_terms(array('taxonomy' => 'casino-category', 'hide_empty' => 0));
+            foreach ($casino_categories as $category) {
+                add_rewrite_rule('^' . $category->slug . '/?$', 'index.php?casino-category=' . $category->slug, 'top');
             }
         }
     }
@@ -85,9 +86,9 @@ if (is_propfirm_ftplugin_enabled()) {
         }
 
         if (isset($options['select_cpt']) && is_single() && $post->post_type == $options['select_cpt']) {
-            $categories = get_the_terms($post->ID, 'category');
-            if ($categories && !is_wp_error($categories)) {
-                $category_slug = $categories[0]->slug;
+            $casino_categories = get_the_terms($post->ID, 'casino-category');
+            if ($casino_categories && !is_wp_error($casino_categories)) {
+                $category_slug = $casino_categories[0]->slug;
                 $expected_url = home_url("/{$category_slug}/{$post->post_name}/");
                 if ($_SERVER['REQUEST_URI'] != parse_url($expected_url, PHP_URL_PATH)) {
                     wp_redirect($expected_url, 301);
@@ -100,23 +101,12 @@ if (is_propfirm_ftplugin_enabled()) {
     add_filter('request', 'ft_custom_request_filter');
     function ft_custom_request_filter($query_vars) {
         $options = get_option('propfirm_ftplugin_settings');
-
-        if (isset($options['select_cpt'])) {
-            // Jika ini adalah permintaan untuk single post dari custom post type
-            if (isset($query_vars['name']) && isset($query_vars['post_type']) && $query_vars['post_type'] == $options['select_cpt']) {
-                return $query_vars;
-            }
-
-            // Jika ini adalah permintaan untuk kategori
-            if (isset($query_vars['category_name'])) {
-                $query_vars['post_type'] = $options['select_cpt'];
-                return $query_vars;
-            }
+        if (isset($query_vars['casino-category']) && isset($options['select_cpt'])) {
+            $query_vars['post_type'] = $options['select_cpt'];
         }
-
         return $query_vars;
     }
-
+    
 }
 
 // Flush rewrite rules saat plugin diaktifkan
