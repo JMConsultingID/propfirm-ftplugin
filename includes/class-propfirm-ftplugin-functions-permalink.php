@@ -38,11 +38,12 @@ function ft_modify_cpt_args() {
     if (isset($options['select_cpt'])) {
         $post_type_object = get_post_type_object($options['select_cpt']);
         if ($post_type_object) {
-            $post_type_object->has_archive = true;
+            $post_type_object->has_archive = isset($options['archive_enable']) && $options['archive_enable'] == 'enable';
             register_post_type($options['select_cpt'], $post_type_object);
         }
     }
 }
+
 
 
 

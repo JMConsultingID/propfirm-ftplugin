@@ -56,7 +56,8 @@ function propfirm_ftplugin_settings_init() {
     add_settings_field('ft_enable_plugin', 'Enable Plugin', 'ft_enable_plugin_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_cpt', 'Select Custom Post Type', 'ft_select_cpt_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_select_taxonomy', 'Select Taxonomy', 'ft_select_taxonomy_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
-    add_settings_field('ft_select_redirect_old_url', 'Redirect old URL', 'ft_select_redirect_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_archive_enable', 'Redirect old URL', 'ft_post_type_archive_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
+    add_settings_field('ft_select_redirect_old_url', 'Post Type Archive', 'ft_select_redirect_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     add_settings_field('ft_flush_rewrite', 'Flush Rewrite Rules', 'ft_flush_rewrite_rules_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
     //add_settings_field('ft_reset_settings', 'Reset Plugin Settings', 'ft_reset_settings_callback', 'propfirm-ftplugin', 'propfirm_ftplugin_general_section');
 }
@@ -92,6 +93,15 @@ function ft_select_taxonomy_callback() {
         echo '<option value="' . esc_attr($taxonomy->name) . '" ' . selected($selected_taxonomy, $taxonomy->name, false) . '>' . esc_html($taxonomy->labels->name) . '</option>';
     }
     echo '</select>';
+}
+
+function ft_post_type_archive_callback() {
+    $options = get_option('propfirm_ftplugin_settings');
+    $value = isset($options['archive_enable']) ? $options['archive_enable'] : 'disable';
+    echo '<select name="propfirm_ftplugin_settings[archive_enable]">
+            <option value="enable" '.selected($value, 'enable', false).'>Enable</option>
+            <option value="disable" '.selected($value, 'disable', false).'>Disable</option>
+          </select>';
 }
 
 
